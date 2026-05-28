@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <title>Hey James how are you</title>
+<body style="background-color: rgb(227, 127, 143);">
+ <style>
+    body{font-family:'Times New Roman', Times, serif;}
+
+ </style>
+
+<h1 style="color: white;">This is a site where im gonna display different photos that i have of James </h1>
+<hr>
+
+
+<!-- Image principale -->
+<div style="display:flex; justify-content:center; gap:20px;">
+
+<a href="https://wa.me/242067101111">
+    Click ici si tu veux parler
+
+</a>
+
+ </div>
+ <br>
+ <div style="display:flex; justify-content:center;">
+    <img src="1.jpg" width="200" onclick="afficherPhotos()">
+ </div>
+
+
+<!-- Images cachées -->
+<div id="galerie" style="display:none;justify-content: center; gap:20px;margin-top: 30px;">
+
+    <img src="3.jpg" width="150">
+    <img src="5.jpg" width="150">
+    <img src="bal.png" width="150">
+    <img src="bal1.jpg" width="150">
+    <img src="J-A & James.jpg" width="150">
+</div>
+
+<script>
+function afficherPhotos() {
+    document.getElementById("galerie").style.display = "block";
+}
+</script>
+
+</body>
+</html>

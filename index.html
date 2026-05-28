@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Jean-Alexandre,James">
+    <meta name="keywords" content="James ,Jean-Alexandre, Bal">
+    <meta name="description" content="j ai fais ce site pour une fille speciale 🥰">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Site de James ❤️</title>
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+}
+
+/* ===================== IMAGES PRINCIPALES ===================== */
+
+/* Conteneur desktop : flex horizontal */
+#photos-principales {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
+    margin: 60px auto;
+    flex-wrap: wrap;
+}
+
+/* Carte de chaque photo principale */
+.photo-card {
+    text-align: center;
+}
+
+.photo-card img {
+    width: 250px;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
+    transition: transform 0.3s;
+    border-radius: 8px;
+}
+
+.photo-card img:hover {
+    transform: scale(1.05);
+}
+
+/* ===================== MOBILE : colonne verticale scrollable ===================== */
+@media (max-width: 600px) {
+
+    #photos-principales {
+        flex-direction: column;
+        gap: 28px;
+        margin: 30px auto;
+        /* scroll horizontal désactivé, scroll vertical libre */
+        overflow-x: hidden;
+        padding: 0 16px;
+        box-sizing: border-box;
+    }
+
+    .photo-card img {
+        width: 90vw;       /* pleine largeur sur mobile */
+        max-width: 360px;
+        border-radius: 12px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+    }
+
+    /* Étiquette "swipe" visible uniquement sur mobile */
+    #swipe-hint {
+        display: block;
+        text-align: center;
+        color: rgba(255,255,255,0.8);
+        font-size: 13px;
+        margin-top: -16px;
+        margin-bottom: 8px;
+        letter-spacing: 0.4px;
+        animation: fadeInOut 2.5s ease-in-out forwards;
+    }
+
+    @keyframes fadeInOut {
+        0%   { opacity: 0; }
+        20%  { opacity: 1; }
+        80%  { opacity: 1; }
+        100% { opacity: 0; }
+    }
+
+    h1 {
+        font-size: 18px;
+        padding: 0 12px;
+    }
+}
+
+/* Masquer le hint sur desktop */
+#swipe-hint {
+    display: none;
+}
+
+/* ===================== GALERIE EN CERCLE ===================== */
+
+.circle-item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120px;
+    height: 120px;
+    margin: -60px 0 0 -60px;
+    opacity: 0;
+    transform: rotate(var(--angle)) translateY(0px) rotate(calc(-1 * var(--angle))) scale(0.15);
+    transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition-delay: var(--delay, 0s);
+}
+
+.circle-item.visible {
+    opacity: 1;
+    transform: rotate(var(--angle)) translateY(-195px) rotate(calc(-1 * var(--angle))) scale(1);
+}
+
+/* Sur mobile, réduire le rayon du cercle */
+@media (max-width: 600px) {
+    .circle-item.visible {
+        transform: rotate(var(--angle)) translateY(-140px) rotate(calc(-1 * var(--angle))) scale(1);
+    }
+    .circle-item {
+        width: 85px;
+        height: 85px;
+        margin: -42px 0 0 -42px;
+    }
+}
+
+.circle-item img,
+.circle-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid rgba(255, 255, 255, 0.75);
+    transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    display: block;
+}
+
+.circle-item img:hover,
+.circle-item video:hover {
+    transform: scale(1.18);
+    border-color: white;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+/* ===================== OVERLAYS GALERIE ===================== */
+
+.overlay-galerie {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.88);
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.galerie-circle-wrapper {
+    position: relative;
+    width: 500px;
+    height: 500px;
+}
+
+@media (max-width: 600px) {
+    .galerie-circle-wrapper {
+        width: 320px;
+        height: 320px;
+    }
+}
+
+.btn-fermer-galerie {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 26px;
+    cursor: pointer;
+    width: 60px; height: 60px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+    z-index: 10;
+    user-select: none;
+}
+
+.btn-fermer-galerie:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translate(-50%,-50%) scale(1.1);
+}
+
+/* ===================== LIGHTBOX ===================== */
+
+#lightbox {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.96);
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+}
+
+#lightbox-content img,
+#lightbox-content video {
+    max-width: 90vw;
+    max-height: 88vh;
+    border-radius: 8px;
+    box-shadow: 0 0 60px rgba(0,0,0,0.9);
+    animation: fadeZoom 0.3s ease;
+}
+
+@keyframes fadeZoom {
+    from { opacity: 0; transform: scale(0.88); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+#close-lightbox {
+    position: fixed;
+    top: 18px; right: 28px;
+    color: white;
+    font-size: 44px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0.75;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 300;
+    user-select: none;
+}
+
+#close-lightbox:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+</style>
+</head>
+
+<body style="background-color: rgb(227, 127, 143);">
+
+<h1 style="color: white; font-family: 'Times New Roman', Times, serif;">
+    This is a site where im gonna display different photos that i have of James
+</h1>
+<hr>
+
+<div style="display: flex; justify-content: center;">
+    <h3 style="font-family: 'Times New Roman', Times, serif; color: white;">
+        j ai eu des photos en plus donc pour l instant ca donne ca
+    </h3>
+</div>
+
+<div style="display: flex; justify-content: center;">
+    <h4 style="font-family: 'Times New Roman', Times, serif; color:white;">
+        je ne suis plus un debutant grace a James donc rajouté de nouvelles photo m a pris 2h 😄
+    </h4>
+</div>
+
+<br>
+
+<a href="https://wa.me/242067101111">
+    au cas ou tu voudrais me contacter click ici 🤷‍♂️
+</a>
+
+<!-- Hint visible uniquement sur mobile -->
+<p id="swipe-hint">⬇ Fais défiler pour voir les photos</p>
+
+<!-- IMAGES PRINCIPALES -->
+<div id="photos-principales">
+
+    <!-- Photo 1 -->
+    <div class="photo-card">
+        <img src="1.jpg" onclick="ouvrirGalerie('overlay1')" title="photo prise par Nobel">
+    </div>
+
+    <!-- Photo 2 -->
+    <div class="photo-card">
+        <img src="perdue.jpg" onclick="ouvrirGalerie('overlay2')" title="ici elle a l air vraiment dans son monde ">
+    </div>
+
+    <!-- Photo 3 -->
+    <div class="photo-card">
+        <img src="James.jpg" onclick="ouvrirGalerie('overlay3')" title="une photo que j avais prise juste pour l embeter de base">
+    </div>
+
+    <!-- Photo 4 -->
+    <div class="photo-card">
+        <img src="perdue2.jpg" onclick="ouvrirGalerie('overlay4')" title="je la trouvais belle donc je l ai prise en photo">
+    </div>
+
+</div>
+
+<h3 style="color:white; font-family:'Times New Roman',Times,serif; text-align:center;">
+    ne fait pas attention a mes airs de wara sur les photos du bal 😅
+</h3>
+
+<!-- ===================== GALERIE 1 ===================== -->
+<div id="overlay1" class="overlay-galerie" onclick="fermerGalerie('overlay1')">
+    <div class="galerie-circle-wrapper" onclick="event.stopPropagation()">
+        <span class="btn-fermer-galerie" onclick="fermerGalerie('overlay1')">✕</span>
+
+        <div class="circle-item" data-overlay="overlay1" style="--angle:0deg;   --delay:0.00s"><img src="3.jpg"            onclick="ouvrirPhoto('3.jpg','img')"></div>
+        <div class="circle-item" data-overlay="overlay1" style="--angle:60deg;  --delay:0.06s"><img src="5.jpg"            onclick="ouvrirPhoto('5.jpg','img')"></div>
+        <div class="circle-item" data-overlay="overlay1" style="--angle:120deg; --delay:0.12s"><img src="bal1.jpg"         onclick="ouvrirPhoto('bal1.jpg','img')"></div>
+        <div class="circle-item" data-overlay="overlay1" style="--angle:180deg; --delay:0.18s"><img src="J-A & James.jpg" onclick="ouvrirPhoto('J-A & James.jpg','img')"></div>
+        <div class="circle-item" data-overlay="overlay1" style="--angle:240deg; --delay:0.24s"><img src="james1.jpg"      onclick="ouvrirPhoto('james1.jpg','img')"></div>
+        <div class="circle-item" data-overlay="overlay1" style="--angle:300deg; --delay:0.30s"><video src="james2.mp4"    onclick="ouvrirPhoto('james2.mp4','video')"></video></div>
+    </div>
+    <p style="position:fixed; bottom:28px; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.5); font-size:13px; pointer-events:none;">
+        Clique sur une photo pour l'agrandir · Clique en dehors pour fermer
+    </p>
+</div>
+
+<!-- ===================== GALERIE 2 ===================== -->
+<div id="overlay2" class="overlay-galerie" onclick="fermerGalerie('overlay2')">
+    <div class="galerie-circle-wrapper" onclick="event.stopPropagation()">
+        <span class="btn-fermer-galerie" onclick="fermerGalerie('overlay2')">✕</span>
+
+        <div class="circle-item" data-overlay="overlay2" style="--angle:0deg;   --delay:0.00s"><video src="perdue1.mp4"  onclick="ouvrirPhoto('perdue1.mp4','video')"></video></div>
+        <div class="circle-item" data-overlay="overlay2" style="--angle:60deg;  --delay:0.06s"><img src="idk.jpg"        onclick="ouvrirPhoto('idk.jpg','img')"></div>
+        <div class="circle-item" data-overlay="overlay2" style="--angle:120deg; --delay:0.12s"><video src="vid3.mp4"     onclick="ouvrirPhoto('vid3.mp4','video')"></video></div>
+        <div class="circle-item" data-overlay="overlay2" style="--angle:180deg; --delay:0.18s"><img src="2.png"          onclick="ouvrirPhoto('2.png','img')"></div>
+        <div class="circle-item" data-overlay="overlay2" style="--angle:240deg; --delay:0.24s"><img src="inter1.jpeg"    onclick="ouvrirPhoto('inter1.jpeg','img')"></div>
+        <div class="circle-item" data-overlay="overlay2" style="--angle:300deg; --delay:0.30s"><video src="inter3.mp4"   onclick="ouvrirPhoto('inter3.mp4','video')"></video></div>
+    </div>
+    <p style="position:fixed; bottom:28px; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.5); font-size:13px; pointer-events:none;">
+        Clique sur une photo pour l'agrandir · Clique en dehors pour fermer
+    </p>
+</div>
+
+<!-- ===================== GALERIE 3 ===================== -->
+<div id="overlay3" class="overlay-galerie" onclick="fermerGalerie('overlay3')">
+    <div class="galerie-circle-wrapper" onclick="event.stopPropagation()">
+        <span class="btn-fermer-galerie" onclick="fermerGalerie('overlay3')">✕</span>
+
+        <div class="circle-item" data-overlay="overlay3" style="--angle:0deg;   --delay:0.00s"><video src="edit.mp4"        onclick="ouvrirPhoto('edit.mp4','video')"></video></div>
+        <div class="circle-item" data-overlay="overlay3" style="--angle:60deg;  --delay:0.06s"><video src="vid2.mp4"     onclick="ouvrirPhoto('vid2.mp4','video')"></video></div>
+        <div class="circle-item" data-overlay="overlay3" style="--angle:120deg; --delay:0.12s"><video src="vid 1.mp4"    onclick="ouvrirPhoto('vid 1.mp4','video')"></video></div>
+        <div class="circle-item" data-overlay="overlay3" style="--angle:180deg; --delay:0.18s"><video src="vid4.mp4"     onclick="ouvrirPhoto('vid4.mp4','video')"></video></div>
+        <div class="circle-item" data-overlay="overlay3" style="--angle:240deg; --delay:0.24s"><img src="inter.jpeg"     onclick="ouvrirPhoto('inter.jpeg','img')"></div>
+        <div class="circle-item" data-overlay="overlay3" style="--angle:300deg; --delay:0.30s"><img src="elle.jpeg"     onclick="ouvrirPhoto('elle.jpeg','img')"></div>
+
+        
+    </div>
+
+    <p style="position:fixed; bottom:28px; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.5); font-size:13px; pointer-events:none;">
+        Clique sur une photo pour l'agrandir · Clique en dehors pour fermerS
+    </p>
+</div>
+<!-- ===================== GALERIE 4 ===================== -->
+<div id="overlay4" class="overlay-galerie" onclick="fermerGalerie('overlay4')">
+    <div class="galerie-circle-wrapper" onclick="event.stopPropagation()">
+        <span class="btn-fermer-galerie" onclick="fermerGalerie('overlay4')">✕</span>
+
+        <div class="circle-item" data-overlay="overlay4" style="--angle:0deg;   --delay:0.00s"><video src="cuisinière du dimache.mp4"        onclick="ouvrirPhoto('cuisinière du dimache.mp4','video')"></video></div>
+
+        
+    </div>
+
+    <p style="position:fixed; bottom:28px; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.5); font-size:13px; pointer-events:none;">
+        Clique sur une photo pour l'agrandir · Clique en dehors pour fermerS
+    </p>
+</div>
+
+<!-- ===================== LIGHTBOX ===================== -->
+<div id="lightbox" onclick="fermerPhoto()">
+    <span id="close-lightbox" onclick="fermerPhoto()">✕</span>
+    <div id="lightbox-content" onclick="event.stopPropagation()"></div>
+</div>
+
+<script>
+function ouvrirGalerie(overlayId) {
+    const overlay = document.getElementById(overlayId);
+    overlay.style.display = "flex";
+    setTimeout(() => {
+        overlay.querySelectorAll('.circle-item').forEach(item => {
+            item.classList.add('visible');
+        });
+    }, 20);
+}
+
+function fermerGalerie(overlayId) {
+    const overlay = document.getElementById(overlayId);
+    overlay.querySelectorAll('.circle-item').forEach(item => {
+        item.classList.remove('visible');
+    });
+    setTimeout(() => {
+        overlay.style.display = "none";
+    }, 450);
+}
+
+function ouvrirPhoto(src, type) {
+    event.stopPropagation();
+    const lightbox = document.getElementById("lightbox");
+    const content  = document.getElementById("lightbox-content");
+    content.innerHTML = '';
+    let el;
+    if (type === 'video') {
+        el = document.createElement('video');
+        el.controls = true;
+        el.autoplay = true;
+    } else {
+        el = document.createElement('img');
+    }
+    el.src = src;
+    content.appendChild(el);
+    lightbox.style.display = "flex";
+}
+
+function fermerPhoto() {
+    document.getElementById("lightbox").style.display = "none";
+    document.getElementById("lightbox-content").innerHTML = '';
+}
+</script>
+
+</body>
+</html>
