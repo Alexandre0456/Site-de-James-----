@@ -1,3 +1,3 @@
 # Site de James
-j ai crée ce site pourton anniversaire
+j ai crée ce site pour son anniversaire
 
