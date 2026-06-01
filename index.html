@@ -244,14 +244,17 @@ body {
 
 <body style="background-color: rgb(227, 127, 143);">
 
+<div style="display:flex ; justify-content: center;">
 <h1 style="color: white; font-family: 'Times New Roman', Times, serif;">
-    Initialement realiser pour etre un cadeau d anniversaire
+   Cadeau d'anniversaire de James 🙃
 </h1>
+</div>
+
 <hr>
 
 <div style="display: flex; justify-content: center;">
     <h3 style="font-family: 'Times New Roman', Times, serif; color: white;">
-        Terminé
+        Je rajoute des photos de temps en temps
     </h3>
 </div>
 
@@ -270,12 +273,17 @@ body {
 
     <!-- Photo 2 -->
     <div class="photo-card">
-        <img src="perdue.jpg" onclick="ouvrirGalerie('overlay2')" title="photo comme une autre">
+        <img src="perdue.jpg" onclick="ouvrirGalerie('overlay2')" title="Une James perdue 🤔 ">
     </div>
 
     <!-- Photo 3 -->
     <div class="photo-card">
-        <img src="James.jpg" onclick="ouvrirGalerie('overlay3')" title="photo comme une autre">
+        <img src="James.jpg" onclick="ouvrirGalerie('overlay3')" title="Tout le temps sur son tel 😒">
+    </div>
+
+    <!-- Photo 4  -->
+    <div class="photo-card">
+        <img src="JD.jpg" onclick="ouvrirGalerie('overlay4')" title="JA & JD">
     </div>
 
 
@@ -335,6 +343,24 @@ body {
     <p style="position:fixed; bottom:28px; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.5); font-size:13px; pointer-events:none;">
         Clique sur une photo pour l'agrandir · Clique en dehors pour fermerS
     </p>
+</div>
+
+    <!-- ===================== GALERIE 4 ===================== -->
+<div id="overlay4" class="overlay-galerie" onclick="fermerGalerie('overlay4')">
+    <div class="galerie-circle-wrapper" onclick="event.stopPropagation()">
+        <span class="btn-fermer-galerie" onclick="fermerGalerie('overlay4')">✕</span>
+
+        <div class="circle-item" data-overlay="overlay4" style="--angle:0deg;  --delay:0.00s"><img src="JA-JD.jpg"     onclick="ouvrirPhoto('JA-JD.jpg','img')"></div>
+        <div class="circle-item" data-overlay="overlay4" style="--angle:60deg; --delay:0.06s"><img src="JA.jpg"     onclick="ouvrirPhoto('JA.jpg','img')"></div>
+
+    </div>
+
+    <p style="position:fixed; bottom:28px; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.5); font-size:13px; pointer-events:none;">
+        Clique sur une photo pour l'agrandir · Clique en dehors pour fermerS
+    </p>
+
+
+
 </div>
 
 <!-- ===================== LIGHTBOX ===================== -->
